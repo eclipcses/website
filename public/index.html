@@ -445,13 +445,8 @@
             animation-delay: 0.3s;
         }
         @keyframes bounce {
-            0%,
-            100% {
-                height: 4px;
-            }
-            50% {
-                height: 18px;
-            }
+            0%, 100% { height: 4px; }
+            50% { height: 18px; }
         }
 
         .about-section {
@@ -483,70 +478,21 @@
         }
 
         @media (max-width: 480px) {
-            body {
-                padding: 20px 12px 40px;
-            }
-            .profile-banner {
-                height: 72px;
-            }
-            .avatar {
-                width: 68px;
-                height: 68px;
-            }
-            .avatar .fallback {
-                font-size: 26px;
-            }
-            .name-group .display-name {
-                font-size: 20px;
-            }
-            .profile-body {
-                padding: 0 16px 16px;
-            }
-            .avatar-row {
-                margin-top: -32px;
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .clock-chip {
-                align-self: flex-start;
-                font-size: 10px;
-                padding: 4px 10px;
-            }
-            .plat-inline {
-                width: 12px;
-                height: 12px;
-            }
-            .activity-mini {
-                padding: 8px 12px;
-            }
-            .activity-mini .mini-icon {
-                width: 32px;
-                height: 32px;
-            }
-            .activity-mini .mini-body .mini-name {
-                font-size: 12px;
-            }
-            .activity-mini .mini-body .mini-detail {
-                font-size: 11px;
-            }
-            .now-playing-track .art {
-                width: 44px;
-                height: 44px;
-            }
-            .now-playing-card .sc-title .source-tag {
-                font-size: 8px;
-                padding: 1px 6px;
-            }
-        }
-
-        @media (max-width: 380px) {
-             disputes {
-                flex-wrap: wrap;
-            }
-            .plat-inline {
-                width: 11px;
-                height: 11px;
-            }
+            body { padding: 20px 12px 40px; }
+            .profile-banner { height: 72px; }
+            .avatar { width: 68px; height: 68px; }
+            .avatar .fallback { font-size: 26px; }
+            .name-group .display-name { font-size: 20px; }
+            .profile-body { padding: 0 16px 16px; }
+            .avatar-row { margin-top: -32px; flex-direction: column; align-items: flex-start; }
+            .clock-chip { align-self: flex-start; font-size: 10px; padding: 4px 10px; }
+            .plat-inline { width: 12px; height: 12px; }
+            .activity-mini { padding: 8px 12px; }
+            .activity-mini .mini-icon { width: 32px; height: 32px; }
+            .activity-mini .mini-body .mini-name { font-size: 12px; }
+            .activity-mini .mini-body .mini-detail { font-size: 11px; }
+            .now-playing-track .art { width: 44px; height: 44px; }
+            .now-playing-card .sc-title .source-tag { font-size: 8px; padding: 1px 6px; }
         }
     </style>
 </head>
@@ -671,29 +617,34 @@
             const assets = activity.assets;
             const appId = activity.application_id;
 
-            if (assets) {
+            if (assets && (assets.large_image || assets.small_image)) {
                 const image = assets.large_image || assets.small_image;
 
-                if (image) {
-                    if (image.startsWith('http://') || image.startsWith('https://')) {
-                        return image;
-                    }
+                if (image.startsWith('mp:external/')) {
+                    return `https://media.discordapp.net/${image.replace('mp:external/', '')}`;
+                }
 
-                    if (image.startsWith('mp:external/')) {
-                        return `https://media.discordapp.net/${image.replace('mp:external/', '')}`;
-                    }
+                if (image.startsWith('spotify:')) {
+                    return `https://i.scdn.co/image/${image.replace('spotify:', '')}`;
+                }
 
-                    if (image.startsWith('spotify:')) {
-                        return `https://i.scdn.co/image/${image.replace('spotify:', '')}`;
-                    }
-
-                    if (appId) {
-                        return `https://cdn.discordapp.com/app-assets/${appId}/${image}.png`;
-                    }
+                if (appId) {
+                    return `https://cdn.discordapp.com/app-assets/${appId}/${image}.png`;
                 }
             }
 
+            if (appId) {
+                return `https://api.lanyard.rest/v1/users/${DISCORD_ID}/assets/${appId}`;
+            }
+
             return null;
+        }
+
+        function handleImageError(imgEl) {
+            imgEl.style.display = 'none';
+            if (imgEl.nextElementSibling) {
+                imgEl.nextElementSibling.style.display = 'inline';
+            }
         }
 
         let lastFmInterval = null;
@@ -706,7 +657,6 @@
                 const data = await res.json();
 
                 if (data.error) {
-                    console.warn('last.fm api error:', data.message);
                     showNoTrack();
                     return;
                 }
@@ -743,13 +693,7 @@
                 document.getElementById('notListening').style.display = 'none';
                 document.getElementById('nowPlayingTrack').style.display = 'flex';
 
-                if (lastFmInterval) {
-                    clearInterval(lastFmInterval);
-                    lastFmInterval = null;
-                }
-
             } catch (e) {
-                console.warn('last.fm fetch error:', e);
                 showNoTrack();
             }
         }
@@ -757,84 +701,40 @@
         function showNoTrack() {
             document.getElementById('notListening').style.display = 'flex';
             document.getElementById('nowPlayingTrack').style.display = 'none';
-            if (lastFmInterval) {
-                clearInterval(lastFmInterval);
-                lastFmInterval = null;
-            }
         }
 
         const BANNER_API_URL = '/api/discord-banner';
-
         let lastBannerUrl = null;
 
         async function loadBanner() {
             const bannerEl = document.getElementById('profileBanner');
             const fallbackDiv = bannerEl.querySelector('.banner-fallback');
 
-            if (!BANNER_API_URL) {
-                bannerEl.style.backgroundImage = 'none';
-                bannerEl.style.backgroundColor = 'var(--panel-2)';
-                fallbackDiv.style.display = 'flex';
-                fallbackDiv.textContent = 'banner';
-                return;
-            }
-
             try {
                 const separator = BANNER_API_URL.includes('?') ? '&' : '?';
-                const response = await fetch(
-                    `${BANNER_API_URL}${separator}t=${Date.now()}`,
-                    { cache: 'no-store' }
-                );
-
-                if (!response.ok) {
-                    throw new Error(`banner backend returned ${response.status}`);
-                }
+                const response = await fetch(`${BANNER_API_URL}${separator}t=${Date.now()}`, { cache: 'no-store' });
+                if (!response.ok) throw new Error();
 
                 const data = await response.json();
+                if (!data.success || !data.url) throw new Error();
 
-                if (!data.success || !data.url) {
-                    throw new Error(data.error || 'No Discord banner available');
-                }
-
-                if (data.url === lastBannerUrl) {
-                    return;
-                }
+                if (data.url === lastBannerUrl) return;
 
                 const bannerUrl = data.url;
                 const img = new Image();
-
                 img.onload = function () {
                     bannerEl.style.backgroundImage = `url("${bannerUrl}")`;
                     bannerEl.style.backgroundColor = 'transparent';
                     fallbackDiv.style.display = 'none';
                     lastBannerUrl = bannerUrl;
                 };
-
-                img.onerror = function () {
-                    throw new Error('Discord CDN banner image failed to load');
-                };
-
                 img.src = bannerUrl;
             } catch (e) {
-                console.warn('banner fetch error:', e);
-
                 if (!lastBannerUrl) {
                     bannerEl.style.backgroundImage = 'none';
                     bannerEl.style.backgroundColor = 'var(--panel-2)';
                     fallbackDiv.style.display = 'flex';
                     fallbackDiv.textContent = 'banner';
-                }
-            }
-        }
-
-        function handleImageError(imgEl, appId) {
-            if (appId && !imgEl.dataset.retried) {
-                imgEl.dataset.retried = 'true';
-                imgEl.src = `https://cdn.discordapp.com/app-icons/${appId}/icon.png`;
-            } else {
-                imgEl.style.display = 'none';
-                if (imgEl.nextElementSibling) {
-                    imgEl.nextElementSibling.style.display = 'inline';
                 }
             }
         }
@@ -849,7 +749,7 @@
                 const user = data.discord_user;
                 const status = data.discord_status || 'offline';
 
-                await loadBanner(user);
+                await loadBanner();
 
                 const avatarImg = document.getElementById('avatarImg');
                 const fallback = document.getElementById('avatarFallback');
@@ -878,11 +778,9 @@
                 document.getElementById('displayName').textContent = displayName;
                 const usernameLine = document.getElementById('usernameLine');
                 const discrim = user.discriminator && user.discriminator !== '0' ? `#${user.discriminator}` : '';
-                usernameLine.innerHTML =
-                    `@${user.username || 'actofpassion'}<span class="discrim">${discrim}</span>`;
+                usernameLine.innerHTML = `@${user.username || 'actofpassion'}<span class="discrim">${discrim}</span>`;
 
-                document.getElementById('statusDot').style.background =
-                    STATUS_COLORS[status] || STATUS_COLORS.offline;
+                document.getElementById('statusDot').style.background = STATUS_COLORS[status] || STATUS_COLORS.offline;
 
                 const activeMap = {
                     desktop: data.active_on_discord_desktop || false,
@@ -892,14 +790,10 @@
                     vr: data.active_on_discord_vr || false
                 };
 
-                const platElements = document.querySelectorAll('.plat-inline');
-                platElements.forEach(el => {
+                document.querySelectorAll('.plat-inline').forEach(el => {
                     const p = el.dataset.platform;
-                    if (activeMap[p]) {
-                        el.classList.add('active');
-                    } else {
-                        el.classList.remove('active');
-                    }
+                    if (activeMap[p]) el.classList.add('active');
+                    else el.classList.remove('active');
                 });
 
                 const activities = data.activities || [];
@@ -923,13 +817,10 @@
                         }
 
                         const iconUrl = getActivityIconUrl(act);
-                        const appId = act.application_id || '';
                         let iconHtml = '';
 
                         if (iconUrl) {
-                            iconHtml = `<img src="${iconUrl}" alt="${appName}" loading="lazy" onerror="handleImageError(this, '${appId}')" /><span class="emoji" style="display:none;">🎮</span>`;
-                        } else if (appId) {
-                            iconHtml = `<img src="https://cdn.discordapp.com/app-icons/${appId}/icon.png" alt="${appName}" loading="lazy" onerror="handleImageError(this, '')" /><span class="emoji" style="display:none;">🎮</span>`;
+                            iconHtml = `<img src="${iconUrl}" alt="${appName}" loading="lazy" onerror="handleImageError(this)" /><span class="emoji" style="display:none;">🎮</span>`;
                         } else {
                             iconHtml = `<span class="emoji">🎮</span>`;
                         }
@@ -952,8 +843,7 @@
             } catch (e) {
                 console.warn('lanyard error:', e);
                 document.getElementById('usernameLine').textContent = '@actofpassion · presence unavailable';
-                document.getElementById('activityMiniList').innerHTML =
-                    `<div class="no-activities">⚠️ could not load presence.</div>`;
+                document.getElementById('activityMiniList').innerHTML = `<div class="no-activities">⚠️ could not load presence.</div>`;
             }
         }
 
