@@ -301,9 +301,6 @@
             height: 100%;
             object-fit: cover;
         }
-        .activity-mini .mini-icon .emoji {
-            font-size: 16px;
-        }
 
         .activity-mini .mini-body {
             flex: 1;
@@ -438,12 +435,8 @@
             border-radius: 2px;
             animation: bounce 1s ease-in-out infinite;
         }
-        .bars span:nth-child(2) {
-            animation-delay: 0.15s;
-        }
-        .bars span:nth-child(3) {
-            animation-delay: 0.3s;
-        }
+        .bars span:nth-child(2) { animation-delay: 0.15s; }
+        .bars span:nth-child(3) { animation-delay: 0.3s; }
         @keyframes bounce {
             0%, 100% { height: 4px; }
             50% { height: 18px; }
@@ -585,6 +578,8 @@
         const LASTFM_USERNAME = 't7iy';
         const LASTFM_API_KEY = '5711aea4ab56f704c3e2726266129b03';
 
+        const appIconCache = {};
+
         function tickClock() {
             const d = new Date();
             document.getElementById('clock').textContent =
@@ -611,7 +606,28 @@
             return `${s}s`;
         }
 
-        function getActivityIconUrl(activity) {
+        async function fetchDiscordAppIcon(appId) {
+            if (!appId) return null;
+            if (appIconCache[appId] !== undefined) return appIconCache[appId];
+
+            try {
+                const res = await fetch(`https://discord.com/api/v9/applications/${appId}/rpc`);
+                if (!res.ok) throw new Error();
+                const data = await res.json();
+                if (data.icon) {
+                    const iconUrl = `https://cdn.discordapp.com/app-icons/${appId}/${data.icon}.png?size=128`;
+                    appIconCache[appId] = iconUrl;
+                    return iconUrl;
+                }
+            } catch (e) {
+                // Ignore API fetch failures
+            }
+
+            appIconCache[appId] = null;
+            return null;
+        }
+
+        async function resolveActivityIconUrl(activity) {
             if (!activity) return null;
 
             const assets = activity.assets;
@@ -634,20 +650,12 @@
             }
 
             if (appId) {
-                return `https://api.lanyard.rest/v1/users/${DISCORD_ID}/assets/${appId}`;
+                const rpcIcon = await fetchDiscordAppIcon(appId);
+                if (rpcIcon) return rpcIcon;
             }
 
             return null;
         }
-
-        function handleImageError(imgEl) {
-            imgEl.style.display = 'none';
-            if (imgEl.nextElementSibling) {
-                imgEl.nextElementSibling.style.display = 'inline';
-            }
-        }
-
-        let lastFmInterval = null;
 
         async function fetchLastFm() {
             try {
@@ -816,13 +824,13 @@
                             elapsed = `⏱ ${formatDuration(now - startTs)}`;
                         }
 
-                        const iconUrl = getActivityIconUrl(act);
+                        const iconUrl = await resolveActivityIconUrl(act);
                         let iconHtml = '';
 
                         if (iconUrl) {
-                            iconHtml = `<img src="${iconUrl}" alt="${appName}" loading="lazy" onerror="handleImageError(this)" /><span class="emoji" style="display:none;">🎮</span>`;
+                            iconHtml = `<img src="${iconUrl}" alt="${appName}" loading="lazy" />`;
                         } else {
-                            iconHtml = `<span class="emoji">🎮</span>`;
+                            iconHtml = `<div style="width:100%;height:100%;background:var(--panel-2);border-radius:6px;"></div>`;
                         }
 
                         html += `
