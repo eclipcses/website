@@ -666,23 +666,30 @@
         }
 
         function getActivityIconUrl(activity) {
+            if (!activity) return null;
+
             const assets = activity.assets;
             const appId = activity.application_id;
 
-            if (assets && assets.large_image) {
-                let largeImage = assets.large_image;
+            if (assets) {
+                const image = assets.large_image || assets.small_image;
 
-                if (largeImage.startsWith('http://') || largeImage.startsWith('https://')) {
-                    return largeImage;
-                }
+                if (image) {
+                    if (image.startsWith('http://') || image.startsWith('https://')) {
+                        return image;
+                    }
 
-                if (largeImage.startsWith('mp:external/')) {
-                    return `https://media.discordapp.net/${largeImage.replace('mp:external/', '')}`;
-                }
+                    if (image.startsWith('mp:external/')) {
+                        return `https://media.discordapp.net/${image.replace('mp:external/', '')}`;
+                    }
 
-                if (appId) {
-                    const assetId = largeImage.includes('/') ? largeImage.split('/').pop() : largeImage;
-                    return `https://cdn.discordapp.com/app-assets/${appId}/${assetId}.png`;
+                    if (image.startsWith('spotify:')) {
+                        return `https://i.scdn.co/image/${image.replace('spotify:', '')}`;
+                    }
+
+                    if (appId) {
+                        return `https://cdn.discordapp.com/app-assets/${appId}/${image}.png`;
+                    }
                 }
             }
 
@@ -910,8 +917,7 @@
                         const iconUrl = getActivityIconUrl(act);
                         let iconHtml = '';
                         if (iconUrl) {
-                            iconHtml =
-                                `<img src="${iconUrl}" alt="${appName}" loading="lazy" onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\\'emoji\\'>🎮</span>';" />`;
+                            iconHtml = `<img src="${iconUrl}" alt="${appName}" loading="lazy" onerror="this.onerror=null; this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='inline';" /><span class="emoji" style="display:none;">🎮</span>`;
                         } else {
                             iconHtml = `<span class="emoji">🎮</span>`;
                         }
