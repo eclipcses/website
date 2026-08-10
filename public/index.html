@@ -540,7 +540,7 @@
         }
 
         @media (max-width: 380px) {
-            .username-row {
+             disputes {
                 flex-wrap: wrap;
             }
             .plat-inline {
@@ -693,10 +693,6 @@
                 }
             }
 
-            if (appId) {
-                return `https://api.lanyard.rest/v1/users/${DISCORD_ID}/assets/${appId}`;
-            }
-
             return null;
         }
 
@@ -831,6 +827,18 @@
             }
         }
 
+        function handleImageError(imgEl, appId) {
+            if (appId && !imgEl.dataset.retried) {
+                imgEl.dataset.retried = 'true';
+                imgEl.src = `https://cdn.discordapp.com/app-icons/${appId}/icon.png`;
+            } else {
+                imgEl.style.display = 'none';
+                if (imgEl.nextElementSibling) {
+                    imgEl.nextElementSibling.style.display = 'inline';
+                }
+            }
+        }
+
         async function loadDiscord() {
             try {
                 const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_ID}`);
@@ -915,9 +923,13 @@
                         }
 
                         const iconUrl = getActivityIconUrl(act);
+                        const appId = act.application_id || '';
                         let iconHtml = '';
+
                         if (iconUrl) {
-                            iconHtml = `<img src="${iconUrl}" alt="${appName}" loading="lazy" onerror="this.style.display='none';" />`;
+                            iconHtml = `<img src="${iconUrl}" alt="${appName}" loading="lazy" onerror="handleImageError(this, '${appId}')" /><span class="emoji" style="display:none;">🎮</span>`;
+                        } else if (appId) {
+                            iconHtml = `<img src="https://cdn.discordapp.com/app-icons/${appId}/icon.png" alt="${appName}" loading="lazy" onerror="handleImageError(this, '')" /><span class="emoji" style="display:none;">🎮</span>`;
                         } else {
                             iconHtml = `<span class="emoji">🎮</span>`;
                         }
