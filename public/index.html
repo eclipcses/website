@@ -56,7 +56,6 @@
             border-color: rgba(255, 255, 255, 0.06);
         }
 
-        /* ---- profile card ---- */
         .profile-banner {
             height: 96px;
             background: var(--panel-2);
@@ -197,7 +196,6 @@
             color: #555;
         }
 
-        /* ---- platform icons inline (SVG - white/gray) ---- */
         .plat-inline {
             display: none;
             width: 14px;
@@ -243,7 +241,6 @@
             flex-shrink: 0;
         }
 
-        /* ---- activities inside profile ---- */
         .profile-activities {
             margin-top: 16px;
             padding-top: 14px;
@@ -340,7 +337,6 @@
             padding: 4px 0;
         }
 
-        /* ---- last.fm card ---- */
         .now-playing-card {
             padding: 20px 22px;
         }
@@ -458,7 +454,6 @@
             }
         }
 
-        /* ---- about ---- */
         .about-section {
             padding: 20px 22px;
         }
@@ -487,7 +482,6 @@
             margin-bottom: 4px;
         }
 
-        /* ---- responsive ---- */
         @media (max-width: 480px) {
             body {
                 padding: 20px 12px 40px;
@@ -559,7 +553,6 @@
 <body>
     <div class="wrap">
 
-        <!-- Profile Card -->
         <div class="panel">
             <div class="profile-banner" id="profileBanner">
                 <div class="banner-fallback">banner</div>
@@ -578,23 +571,18 @@
                             <div class="username-row">
                                 <span class="username" id="usernameLine">@actofpassion<span class="discrim">#0</span></span>
 
-                                <!-- Desktop -->
                                 <span class="plat-inline" data-platform="desktop" title="desktop">
                                     <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
                                 </span>
-                                <!-- Web -->
                                 <span class="plat-inline" data-platform="web" title="web">
                                     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                                 </span>
-                                <!-- Mobile -->
                                 <span class="plat-inline" data-platform="mobile" title="mobile">
                                     <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
                                 </span>
-                                <!-- Embedded -->
                                 <span class="plat-inline" data-platform="embedded" title="embedded">
                                     <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="13" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="19"/></svg>
                                 </span>
-                                <!-- VR -->
                                 <span class="plat-inline" data-platform="vr" title="vr">
                                     <svg viewBox="0 0 24 24"><path d="M4 14v-3a8 8 0 0 1 16 0v3"/><path d="M18 14c0 1.5-1.5 3-3 3h-1a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1h1c1.5 0 3 .5 3 2z"/><path d="M6 14c0 1.5 1.5 3 3 3h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H9c-1.5 0-3 .5-3 2z"/></svg>
                                 </span>
@@ -606,7 +594,6 @@
                     </div>
                 </div>
 
-                <!-- Activities -->
                 <div class="profile-activities" id="profileActivities">
                     <div class="act-label">
                         <span>activities</span>
@@ -619,7 +606,6 @@
             </div>
         </div>
 
-        <!-- Now Playing (Last.fm) -->
         <div class="panel now-playing-card">
             <div class="sc-title">
                 <span>now playing</span>
@@ -639,7 +625,6 @@
             </div>
         </div>
 
-        <!-- About -->
         <div class="panel about-section">
             <h3>about</h3>
             <p>hey, i'm <strong>dani</strong>, a 14 y/o developer from <strong>romania</strong>.</p>
@@ -650,15 +635,10 @@
     </div>
 
     <script>
-        // ============================================================
-        // CONFIG — change these to your own
-        // ============================================================
         const DISCORD_ID = '852991682748219392';
         const LASTFM_USERNAME = 't7iy';
         const LASTFM_API_KEY = '5711aea4ab56f704c3e2726266129b03';
-        // ============================================================
 
-        // ---- clock ----
         function tickClock() {
             const d = new Date();
             document.getElementById('clock').textContent =
@@ -687,15 +667,29 @@
 
         function getActivityIconUrl(activity) {
             const assets = activity.assets;
-            if (!assets || !assets.large_image) return null;
-            const largeImage = assets.large_image;
             const appId = activity.application_id;
-            if (largeImage.startsWith('http://') || largeImage.startsWith('https://')) return largeImage;
-            if (largeImage.startsWith('mp:external/')) return largeImage.replace('mp:external/', '');
-            if (appId) {
-                const assetId = largeImage.includes('/') ? largeImage.split('/').pop() : largeImage;
-                return `https://cdn.discordapp.com/app-assets/${appId}/${assetId}.png`;
+
+            if (assets && assets.large_image) {
+                let largeImage = assets.large_image;
+
+                if (largeImage.startsWith('http://') || largeImage.startsWith('https://')) {
+                    return largeImage;
+                }
+
+                if (largeImage.startsWith('mp:external/')) {
+                    return `https://media.discordapp.net/${largeImage.replace('mp:external/', '')}`;
+                }
+
+                if (appId) {
+                    const assetId = largeImage.includes('/') ? largeImage.split('/').pop() : largeImage;
+                    return `https://cdn.discordapp.com/app-assets/${appId}/${assetId}.png`;
+                }
             }
+
+            if (appId) {
+                return `https://cdn.discordapp.com/app-icons/${appId}/icon.png`;
+            }
+
             return null;
         }
 
@@ -766,10 +760,6 @@
             }
         }
 
-        // ---- banner loader (Render backend) ----
-        // Set this to your Render Web Service URL after deployment.
-        // Example:
-        // const BANNER_API_URL = 'https://discord-banner-api-xxxx.onrender.com/api/discord-banner';
         const BANNER_API_URL = '/api/discord-banner';
 
         let lastBannerUrl = null;
@@ -803,7 +793,6 @@
                     throw new Error(data.error || 'No Discord banner available');
                 }
 
-                // Avoid unnecessary image reloads when the banner has not changed.
                 if (data.url === lastBannerUrl) {
                     return;
                 }
@@ -826,8 +815,6 @@
             } catch (e) {
                 console.warn('banner fetch error:', e);
 
-                // Keep the current banner visible if a temporary backend
-                // or network error occurs.
                 if (!lastBannerUrl) {
                     bannerEl.style.backgroundImage = 'none';
                     bannerEl.style.backgroundColor = 'var(--panel-2)';
@@ -837,7 +824,6 @@
             }
         }
 
-        // ---- main discord fetch ----
         async function loadDiscord() {
             try {
                 const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_ID}`);
@@ -848,10 +834,8 @@
                 const user = data.discord_user;
                 const status = data.discord_status || 'offline';
 
-                // ---- Banner ----
                 await loadBanner(user);
 
-                // ---- Avatar ----
                 const avatarImg = document.getElementById('avatarImg');
                 const fallback = document.getElementById('avatarFallback');
                 if (user.avatar) {
@@ -865,7 +849,6 @@
                     fallback.textContent = initial.toLowerCase();
                 }
 
-                // ---- Avatar decoration ----
                 const decoContainer = document.getElementById('avatarDecoration');
                 if (user.avatar_decoration_data && user.avatar_decoration_data.asset) {
                     const asset = user.avatar_decoration_data.asset;
@@ -876,7 +859,6 @@
                     decoContainer.style.display = 'none';
                 }
 
-                // ---- Name ----
                 const displayName = user.global_name || user.username || 'dani';
                 document.getElementById('displayName').textContent = displayName;
                 const usernameLine = document.getElementById('usernameLine');
@@ -884,11 +866,9 @@
                 usernameLine.innerHTML =
                     `@${user.username || 'actofpassion'}<span class="discrim">${discrim}</span>`;
 
-                // ---- Status dot ----
                 document.getElementById('statusDot').style.background =
                     STATUS_COLORS[status] || STATUS_COLORS.offline;
 
-                // ---- Platform icons — only show when active ----
                 const activeMap = {
                     desktop: data.active_on_discord_desktop || false,
                     web: data.active_on_discord_web || false,
@@ -907,7 +887,6 @@
                     }
                 });
 
-                // ---- Activities (filter out Spotify and custom status) ----
                 const activities = data.activities || [];
                 const displayActivities = activities.filter(a => a.type !== 4 && a.type !== 2);
                 document.getElementById('activityCount').textContent = displayActivities.length;
@@ -932,9 +911,9 @@
                         let iconHtml = '';
                         if (iconUrl) {
                             iconHtml =
-                                `<img src="${iconUrl}" alt="${appName}" loading="lazy" onerror="this.style.display='none'" />`;
+                                `<img src="${iconUrl}" alt="${appName}" loading="lazy" onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\\'emoji\\'>🎮</span>';" />`;
                         } else {
-                            iconHtml = `<span class="emoji">📦</span>`;
+                            iconHtml = `<span class="emoji">🎮</span>`;
                         }
 
                         html += `
@@ -960,7 +939,6 @@
             }
         }
 
-        // ---- load everything ----
         async function loadAll() {
             await loadDiscord();
             await fetchLastFm();
