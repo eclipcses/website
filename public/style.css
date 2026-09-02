@@ -1,0 +1,387 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --bg: #0c0c0c;
+    --panel: #161616;
+    --panel-2: #222;
+    --line: #333;
+    --text: #eee;
+    --muted: #888;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --max-width: 640px;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    padding: 40px 20px 60px;
+    display: flex;
+    justify-content: center;
+}
+
+.wrap {
+    width: 100%;
+    max-width: var(--max-width);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+}
+
+.panel {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    width: 100%;
+    transition: border-color 0.2s;
+}
+.panel:hover {
+    border-color: rgba(255, 255, 255, 0.06);
+}
+
+.profile-banner {
+    height: 96px;
+    background: var(--panel-2);
+    border-bottom: 1px solid var(--line);
+    position: relative;
+    overflow: hidden;
+    background-size: cover !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+    transition: background-image 0.4s ease;
+}
+.profile-banner .banner-fallback {
+    width: 100%;
+    height: 100%;
+    background: var(--panel-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.04em;
+}
+
+.profile-body {
+    padding: 0 24px 20px;
+}
+
+.avatar-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-top: -38px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.avatar-wrapper {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    flex: 1;
+    min-width: 0;
+}
+
+.avatar {
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    border: 4px solid var(--panel);
+    background: var(--panel-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: visible;
+    flex-shrink: 0;
+}
+.avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    display: none;
+    position: relative;
+    z-index: 1;
+}
+.avatar .fallback {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    background: var(--panel-2);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    position: relative;
+}
+.avatar .decoration {
+    position: absolute;
+    top: -6px;
+    left: -6px;
+    width: calc(100% + 12px);
+    height: calc(100% + 12px);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 2;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.9;
+}
+
+.status-dot {
+    position: absolute;
+    right: 2px;
+    bottom: 2px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #747f8d;
+    border: 4px solid var(--panel);
+    transition: background 0.3s;
+    z-index: 3;
+}
+
+.name-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+}
+.name-group .display-name {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: #eee;
+}
+
+.username-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+    margin-top: 0px;
+}
+.username-row .username {
+    font-size: 13px;
+    color: var(--muted);
+}
+.username-row .username .discrim {
+    color: #555;
+}
+
+.plat-inline {
+    display: none;
+    width: 14px;
+    height: 14px;
+    opacity: 0.35;
+    transition: opacity 0.2s ease;
+    flex-shrink: 0;
+    color: #bbb;
+}
+.plat-inline.active {
+    display: inline-block;
+    opacity: 0.55;
+}
+.plat-inline.active:hover {
+    opacity: 0.9;
+}
+.plat-inline svg {
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.plat-inline + .plat-inline {
+    margin-left: 1px;
+}
+
+.clock-box {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    flex-shrink: 0;
+    position: relative;
+}
+.clock-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+}
+.clock-offset {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: #555;
+    white-space: nowrap;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 2px;
+}
+
+.profile-activities {
+    margin-top: 28px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+}
+.profile-activities .act-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.profile-activities .act-label .count {
+    background: var(--panel-2);
+    padding: 0 8px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    font-size: 10px;
+}
+
+.activity-mini-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.activity-mini {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    transition: border-color 0.2s;
+}
+.activity-mini:hover {
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.activity-mini .mini-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    flex-shrink: 0;
+    background: var(--panel);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 1px solid var(--line);
+}
+.activity-mini .mini-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.activity-mini .mini-body {
+    flex: 1;
+    min-width: 0;
+}
+.activity-mini .mini-body .mini-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #eee;
+}
+.activity-mini .mini-body .mini-detail {
+    font-size: 12px;
+    color: #aaa;
+    margin-top: 0px;
+}
+.activity-mini .mini-body .mini-state {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 0px;
+}
+.activity-mini .mini-body .mini-timer {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 2px;
+}
+
+.no-activities {
+    color: var(--muted);
+    font-size: 12px;
+    padding: 4px 0;
+}
+
+.about-section {
+    padding: 20px 22px;
+}
+.about-section h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #ccc;
+}
+.about-section p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #bbb;
+}
+.about-section strong {
+    color: #fff;
+    font-weight: 600;
+}
+.about-section .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    margin-top: 14px;
+    margin-bottom: 4px;
+}
+
+@media (max-width: 480px) {
+    body { padding: 20px 12px 40px; }
+    .profile-banner { height: 72px; }
+    .avatar { width: 68px; height: 68px; }
+    .avatar .fallback { font-size: 26px; }
+    .name-group .display-name { font-size: 20px; }
+    .profile-body { padding: 0 16px 16px; }
+    .avatar-row { margin-top: -32px; }
+    .clock-chip { font-size: 10px; padding: 4px 10px; }
+    .plat-inline { width: 12px; height: 12px; }
+    .activity-mini { padding: 8px 12px; }
+    .activity-mini .mini-icon { width: 32px; height: 32px; }
+    .activity-mini .mini-body .mini-name { font-size: 12px; }
+    .activity-mini .mini-body .mini-detail { font-size: 11px; }
+}
