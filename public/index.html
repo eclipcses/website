@@ -206,6 +206,9 @@ d::::::ddddd::::::dda::::a    a:::::a  n::::n    n::::ni::::::i        l::::::li
         .about-section p { font-size: 14px; line-height: 1.6; color: #bbb; }
         .about-section strong { color: #fff; font-weight: 600; }
         .about-section .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; color: var(--muted); margin-top: 14px; margin-bottom: 4px; }
+        .tooltip-trigger { position: relative; cursor: help; border-bottom: 1px dotted var(--muted); }
+        .tooltip-box { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: var(--panel-2); border: 1px solid var(--line); padding: 4px 8px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 0.2s; }
+        .tooltip-trigger:hover .tooltip-box { opacity: 1; }
         @media (max-width: 480px) { body { padding: 20px 12px 40px; } .profile-banner { height: 72px; } .avatar { width: 68px; height: 68px; } .avatar .fallback { font-size: 26px; } .name-group .display-name { font-size: 20px; } .profile-body { padding: 0 16px 16px; } .avatar-row { margin-top: -32px; } .clock-chip { font-size: 10px; padding: 4px 10px; } .plat-inline { width: 12px; height: 12px; } .activity-mini { padding: 8px 12px; } .activity-mini .mini-icon { width: 32px; height: 32px; } .activity-mini .mini-body .mini-name { font-size: 12px; } .activity-mini .mini-body .mini-detail { font-size: 11px; } }
     </style>
 </head>
@@ -254,7 +257,7 @@ d::::::ddddd::::::dda::::a    a:::::a  n::::n    n::::ni::::::i        l::::::li
         </div>
         <div class="panel about-section">
             <h3>about</h3>
-            <p>hey, i'm <strong>dani</strong>, a 14 y/o from <strong>romania</strong></p>
+            <p>hey, i'm <strong>dani</strong>, a <span class="tooltip-trigger"><span id="static-age">14</span> year old<span class="tooltip-box" id="animated-age"></span></span> from <strong>romania</strong></p>
             <div class="eyebrow">interests</div>
             <p>i love gaming, music, coding and spending all of my time on my computer</p>
         </div>
@@ -392,6 +395,17 @@ d::::::ddddd::::::dda::::a    a:::::a  n::::n    n::::ni::::::i        l::::::li
         setInterval(loadDiscord, 1000);
         setInterval(loadBanner, 1000);
         document.addEventListener('contextmenu', e => e.preventDefault());
+
+        const BIRTH_DATE = new Date('2012-01-26');
+        function updateAge() {
+            const now = new Date();
+            const diff = now - BIRTH_DATE;
+            const years = diff / (365.25 * 24 * 60 * 60 * 1000);
+            document.getElementById('static-age').textContent = Math.floor(years);
+            document.getElementById('animated-age').textContent = years.toFixed(10);
+        }
+        updateAge();
+        setInterval(updateAge, 100);
     </script>
 </body>
 </html>
