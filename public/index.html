@@ -160,7 +160,7 @@ d::::::ddddd::::::dda::::a    a:::::a  n::::n    n::::ni::::::i        l::::::li
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         :root { --bg: #0c0c0c; --panel: #161616; --panel-2: #222; --line: #333; --text: #eee; --muted: #888; --radius: 12px; --radius-sm: 8px; --max-width: 640px; }
-        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; padding: 40px 20px 60px; display: flex; justify-content: center; user-select: none; -webkit-user-select: none; }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; padding: 40px 20px 60px; display: flex; justify-content: center; user-select: none; -webkit-user-select: none; cursor: url('/cursor.png'), auto; }
         .wrap { width: 100%; max-width: var(--max-width); display: flex; flex-direction: column; align-items: center; gap: 18px; }
         .panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; width: 100%; transition: border-color 0.2s; }
         .panel:hover { border-color: rgba(255, 255, 255, 0.06); }
@@ -206,10 +206,10 @@ d::::::ddddd::::::dda::::a    a:::::a  n::::n    n::::ni::::::i        l::::::li
         .about-section p { font-size: 14px; line-height: 1.6; color: #bbb; }
         .about-section strong { color: #fff; font-weight: 600; }
         .about-section .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; color: var(--muted); margin-top: 14px; margin-bottom: 4px; }
-        .tooltip-trigger { position: relative; cursor: help; border-bottom: 1px dotted var(--muted); }
+        .tooltip-trigger { position: relative; border-bottom: 1px dotted var(--muted); }
         .tooltip-box { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: var(--panel-2); border: 1px solid var(--line); padding: 4px 8px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 0.2s; }
         .tooltip-trigger:hover .tooltip-box { opacity: 1; }
-        @media (max-width: 480px) { body { padding: 20px 12px 40px; } .profile-banner { height: 72px; } .avatar { width: 68px; height: 68px; } .avatar .fallback { font-size: 26px; } .name-group .display-name { font-size: 20px; } .profile-body { padding: 0 16px 16px; } .avatar-row { margin-top: -32px; } .clock-chip { font-size: 10px; padding: 4px 10px; } .plat-inline { width: 12px; height: 12px; } .activity-mini { padding: 8px 12px; } .activity-mini .mini-icon { width: 32px; height: 32px; } .activity-mini .mini-body .mini-name { font-size: 12px; } .activity-mini .mini-body .mini-detail { font-size: 11px; } }
+        @media (max-width: 480px) { body { padding: 20px 12px 40px; cursor: auto; } .profile-banner { height: 72px; } .avatar { width: 68px; height: 68px; } .avatar .fallback { font-size: 26px; } .name-group .display-name { font-size: 20px; } .profile-body { padding: 0 16px 16px; } .avatar-row { margin-top: -32px; } .clock-chip { font-size: 10px; padding: 4px 10px; } .plat-inline { width: 12px; height: 12px; } .activity-mini { padding: 8px 12px; } .activity-mini .mini-icon { width: 32px; height: 32px; } .activity-mini .mini-body .mini-name { font-size: 12px; } .activity-mini .mini-body .mini-detail { font-size: 11px; } }
     </style>
 </head>
 <body>
@@ -259,7 +259,7 @@ d::::::ddddd::::::dda::::a    a:::::a  n::::n    n::::ni::::::i        l::::::li
             <h3>about</h3>
             <p>hey, i'm <strong>dani</strong>, a <span class="tooltip-trigger"><span id="static-age">14</span> year old<span class="tooltip-box" id="animated-age"></span></span> from <strong>romania</strong></p>
             <div class="eyebrow">interests</div>
-            <p>i love gaming, music, coding and spending all of my time on my computer</p>
+            <p>i like gaming, music, coding and spending all of my time on my computer</p>
         </div>
     </div>
     <script>
