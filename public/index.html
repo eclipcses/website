@@ -230,6 +230,14 @@
             margin-left: 1px;
         }
 
+        .clock-box {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 2px;
+            flex-shrink: 0;
+            position: relative;
+        }
         .clock-chip {
             display: flex;
             align-items: center;
@@ -241,13 +249,22 @@
             border: 1px solid var(--line);
             padding: 6px 12px;
             border-radius: var(--radius-sm);
-            margin-bottom: 4px;
             white-space: nowrap;
-            flex-shrink: 0;
+        }
+        .clock-offset {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: #555;
+            white-space: nowrap;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 2px;
         }
 
         .profile-activities {
-            margin-top: 16px;
+            margin-top: 28px;
             padding-top: 14px;
             border-top: 1px solid var(--line);
         }
@@ -339,113 +356,7 @@
             padding: 4px 0;
         }
 
-        .now-playing-card {
-            padding: 20px 22px;
-        }
-        .now-playing-card .sc-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 15px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #ccc;
-        }
-        .now-playing-card .sc-title .source-tag {
-            font-size: 9px;
-            font-weight: 400;
-            color: var(--muted);
-            background: var(--panel-2);
-            padding: 2px 8px;
-            border-radius: 10px;
-            border: 1px solid var(--line);
-            letter-spacing: 0.04em;
-            margin-left: auto;
-        }
 
-        .not-listening {
-            margin-top: 16px;
-            display: flex;
-            gap: 14px;
-            align-items: center;
-            background: var(--panel-2);
-            border: 1px solid var(--line);
-            border-radius: var(--radius-sm);
-            padding: 16px;
-            color: var(--muted);
-            font-size: 13px;
-        }
-        .not-listening .icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            flex-shrink: 0;
-            background: var(--panel);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-        }
-
-        .now-playing-track {
-            margin-top: 16px;
-            display: none;
-            gap: 14px;
-            align-items: center;
-            background: var(--panel-2);
-            border: 1px solid var(--line);
-            border-radius: var(--radius-sm);
-            padding: 14px 16px;
-        }
-        .now-playing-track .art {
-            width: 52px;
-            height: 52px;
-            border-radius: 10px;
-            flex-shrink: 0;
-            background-size: cover;
-            background-position: center;
-            background: var(--panel);
-            border: 1px solid var(--line);
-        }
-        .now-playing-track .track-info {
-            flex: 1;
-            min-width: 0;
-        }
-        .now-playing-track .track-info .track {
-            font-size: 14px;
-            font-weight: 600;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            color: #eee;
-        }
-        .now-playing-track .track-info .artist {
-            font-size: 12px;
-            color: var(--muted);
-            margin-top: 2px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .bars {
-            display: flex;
-            gap: 3px;
-            align-items: flex-end;
-            height: 18px;
-            flex-shrink: 0;
-        }
-        .bars span {
-            width: 3px;
-            background: #888;
-            border-radius: 2px;
-            animation: bounce 1s ease-in-out infinite;
-        }
-        .bars span:nth-child(2) { animation-delay: 0.15s; }
-        .bars span:nth-child(3) { animation-delay: 0.3s; }
-        @keyframes bounce {
-            0%, 100% { height: 4px; }
-            50% { height: 18px; }
-        }
 
         .about-section {
             padding: 20px 22px;
@@ -483,14 +394,14 @@
             .name-group .display-name { font-size: 20px; }
             .profile-body { padding: 0 16px 16px; }
             .avatar-row { margin-top: -32px; flex-direction: column; align-items: flex-start; }
-            .clock-chip { align-self: flex-start; font-size: 10px; padding: 4px 10px; }
+            .clock-box { align-self: flex-start; }
+            .clock-chip { font-size: 10px; padding: 4px 10px; }
             .plat-inline { width: 12px; height: 12px; }
             .activity-mini { padding: 8px 12px; }
             .activity-mini .mini-icon { width: 32px; height: 32px; }
             .activity-mini .mini-body .mini-name { font-size: 12px; }
             .activity-mini .mini-body .mini-detail { font-size: 11px; }
-            .now-playing-track .art { width: 44px; height: 44px; }
-            .now-playing-card .sc-title .source-tag { font-size: 8px; padding: 1px 6px; }
+
         }
     </style>
 </head>
@@ -533,8 +444,9 @@
                             </div>
                         </div>
                     </div>
-                    <div>
-                        <div class="clock-chip">🕓 <span id="clock">--:--</span></div>
+                    <div class="clock-box">
+                        <div class="clock-chip"><svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> <span id="clock">--:--</span></div>
+                        <div class="clock-offset" id="clockOffset"></div>
                     </div>
                 </div>
 
@@ -550,24 +462,7 @@
             </div>
         </div>
 
-        <div class="panel now-playing-card">
-            <div class="sc-title">
-                <span>now playing</span>
-                <span class="source-tag">last.fm</span>
-            </div>
-            <div class="not-listening" id="notListening">
-                <div class="icon">🎧</div>
-                <div>not scrobbling.<br /><span style="font-size:12px;color:#555;">no track playing.</span></div>
-            </div>
-            <div class="now-playing-track" id="nowPlayingTrack">
-                <div class="art" id="trackArt"></div>
-                <div class="track-info">
-                    <div class="track" id="trackName">—</div>
-                    <div class="artist" id="trackArtist">—</div>
-                </div>
-                <div class="bars"><span></span><span></span><span></span></div>
-            </div>
-        </div>
+
 
         <div class="panel about-section">
             <h3>about</h3>
@@ -580,18 +475,34 @@
 
     <script>
         const DISCORD_ID = '852991682748219392';
-        const LASTFM_USERNAME = 't7iy';
-        const LASTFM_API_KEY = '5711aea4ab56f704c3e2726266129b03';
+
 
         const appIconCache = {};
 
         function tickClock() {
             const d = new Date();
             document.getElementById('clock').textContent =
-                d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Bucharest' });
+
+            const localOffset = -d.getTimezoneOffset() / 60;
+            const bucharestStr = d.toLocaleString('en-US', { timeZone: 'Europe/Bucharest', hour: 'numeric', hour12: false });
+            const bucharestHour = parseInt(bucharestStr);
+            const localHour = d.getHours();
+            let diff = bucharestHour - localHour;
+            if (diff > 12) diff -= 24;
+            if (diff < -12) diff += 24;
+
+            const offsetEl = document.getElementById('clockOffset');
+            if (diff === 0) {
+                offsetEl.textContent = 'same time as you';
+            } else if (diff > 0) {
+                offsetEl.textContent = `${diff}h ahead of you`;
+            } else {
+                offsetEl.textContent = `${Math.abs(diff)}h behind you`;
+            }
         }
         tickClock();
-        setInterval(tickClock, 1000 * 30);
+        setInterval(tickClock, 1000);
 
         const STATUS_COLORS = {
             online: '#3ddc84',
@@ -662,59 +573,7 @@
             return null;
         }
 
-        async function fetchLastFm() {
-            try {
-                const url =
-                    `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${LASTFM_USERNAME}&api_key=${LASTFM_API_KEY}&format=json&limit=1`;
-                const res = await fetch(url);
-                const data = await res.json();
 
-                if (data.error) {
-                    showNoTrack();
-                    return;
-                }
-
-                const tracks = data?.recenttracks?.track;
-                if (!tracks || tracks.length === 0) {
-                    showNoTrack();
-                    return;
-                }
-
-                const track = tracks[0];
-                const isNowPlaying = track['@attr'] && track['@attr'].nowplaying === 'true';
-
-                if (!isNowPlaying) {
-                    showNoTrack();
-                    return;
-                }
-
-                const name = track.name || '—';
-                const artist = track.artist?.['#text'] || '—';
-                const image = track.image?.[3]?.['#text'] || '';
-
-                document.getElementById('trackName').textContent = name;
-                document.getElementById('trackArtist').textContent = artist;
-
-                const artEl = document.getElementById('trackArt');
-                if (image) {
-                    artEl.style.backgroundImage = `url(${image})`;
-                    artEl.style.backgroundSize = 'cover';
-                } else {
-                    artEl.style.backgroundImage = 'linear-gradient(135deg, #333, #111)';
-                }
-
-                document.getElementById('notListening').style.display = 'none';
-                document.getElementById('nowPlayingTrack').style.display = 'flex';
-
-            } catch (e) {
-                showNoTrack();
-            }
-        }
-
-        function showNoTrack() {
-            document.getElementById('notListening').style.display = 'flex';
-            document.getElementById('nowPlayingTrack').style.display = 'none';
-        }
 
         const BANNER_API_URL = '/api/discord-banner';
         let lastBannerUrl = null;
@@ -810,7 +669,7 @@
                 });
 
                 const activities = data.activities || [];
-                const displayActivities = activities.filter(a => a.type !== 4 && a.type !== 2);
+                const displayActivities = activities.filter(a => a.type !== 4);
                 document.getElementById('activityCount').textContent = displayActivities.length;
 
                 const listEl = document.getElementById('activityMiniList');
@@ -862,13 +721,11 @@
 
         async function loadAll() {
             await loadDiscord();
-            await fetchLastFm();
         }
 
         loadAll();
-        setInterval(loadDiscord, 5000);
-        setInterval(fetchLastFm, 5000);
-        setInterval(loadBanner, 30000);
+        setInterval(loadDiscord, 1000);
+        setInterval(loadBanner, 1000);
     </script>
 </body>
 </html>
