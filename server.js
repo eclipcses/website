@@ -6,6 +6,10 @@ const PORT = process.env.PORT || 10000;
 
 app.use(express.static(path.join(__dirname, "public")));
 
+app.get("/.well-known/discord", (req, res) => {
+    res.send("dh=0695c0036c38c0d02cddd9c76f71b287827b2465");
+});
+
 app.get("/api/discord-banner", async (req, res) => {
     try {
         const token = process.env.DISCORD_BOT_TOKEN;
