@@ -185,7 +185,7 @@ d::::::ddddd::::::dda::::a    a:::::a  n::::n    n::::ni::::::i        l::::::li
         .plat-inline svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
         .plat-inline + .plat-inline { margin-left: 1px; }
         .clock-box { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0; position: relative; }
-        .clock-chip { display: flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); background: var(--panel-2); border: 1px solid var(--line); padding: 6px 12px; border-radius: var(--radius-sm); white-space: nowrap; }
+        .clock-chip { display: flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); background: var(--panel-2); border: 1px solid var(--line); padding: 6px 12px; border-radius: var(--radius-sm); white-space: nowrap; position: relative; }
         .clock-offset { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #555; white-space: nowrap; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 2px; }
         .profile-activities { margin-top: 28px; padding-top: 14px; border-top: 1px solid var(--line); }
         .profile-activities .act-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
@@ -207,8 +207,9 @@ d::::::ddddd::::::dda::::a    a:::::a  n::::n    n::::ni::::::i        l::::::li
         .about-section strong { color: #fff; font-weight: 600; }
         .about-section .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; color: var(--muted); margin-top: 14px; margin-bottom: 4px; }
         .tooltip-trigger { position: relative; border-bottom: 1px dotted var(--muted); }
-        .tooltip-box { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: var(--panel-2); border: 1px solid var(--line); padding: 4px 8px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 0.2s; }
+        .tooltip-box { position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); background: var(--panel-2); border: 1px solid var(--line); padding: 4px 8px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 0.2s; }
         .tooltip-trigger:hover .tooltip-box { opacity: 1; }
+        .clock-chip:hover .tooltip-box { opacity: 1; }
         @media (max-width: 480px) { body { padding: 20px 12px 40px; cursor: auto; } .profile-banner { height: 72px; } .avatar { width: 68px; height: 68px; } .avatar .fallback { font-size: 26px; } .name-group .display-name { font-size: 20px; } .profile-body { padding: 0 16px 16px; } .avatar-row { margin-top: -32px; } .clock-chip { font-size: 10px; padding: 4px 10px; } .plat-inline { width: 12px; height: 12px; } .activity-mini { padding: 8px 12px; } .activity-mini .mini-icon { width: 32px; height: 32px; } .activity-mini .mini-body .mini-name { font-size: 12px; } .activity-mini .mini-body .mini-detail { font-size: 11px; } }
     </style>
 </head>
@@ -240,7 +241,7 @@ d::::::ddddd::::::dda::::a    a:::::a  n::::n    n::::ni::::::i        l::::::li
                         </div>
                     </div>
                     <div class="clock-box">
-                        <div class="clock-chip" title="Europe/Bucharest"><svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> <span id="clock">--:--</span></div>
+                        <div class="clock-chip"><svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> <span id="clock">--:--</span><span class="tooltip-box" style="bottom: calc(100% + 8px);">Europe/Bucharest</span></div>
                         <div class="clock-offset" id="clockOffset"></div>
                     </div>
                 </div>
