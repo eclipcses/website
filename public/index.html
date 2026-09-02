@@ -179,7 +179,7 @@ d::::::ddddd::::::dda::::a    a:::::a  n::::n    n::::ni::::::i        l::::::li
         .username-row { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; margin-top: 0; }
         .username-row .username { font-size: 13px; color: var(--muted); }
         .username-row .username .discrim { color: #555; }
-        .plat-inline { display: none; width: 14px; height: 14px; opacity: 0.35; transition: opacity 0.2s ease; flex-shrink: 0; color: #bbb; }
+        .plat-inline { display: none; width: 14px; height: 14px; opacity: 0.35; transition: opacity 0.2s ease; flex-shrink: 0; color: #bbb; position: relative; }
         .plat-inline.active { display: inline-block; opacity: 0.55; }
         .plat-inline.active:hover { opacity: 0.9; }
         .plat-inline svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
@@ -210,6 +210,7 @@ d::::::ddddd::::::dda::::a    a:::::a  n::::n    n::::ni::::::i        l::::::li
         .tooltip-box { position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); background: var(--panel-2); border: 1px solid var(--line); padding: 4px 8px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 0.2s; }
         .tooltip-trigger:hover .tooltip-box { opacity: 1; }
         .clock-chip:hover .tooltip-box { opacity: 1; }
+        .plat-inline:hover .tooltip-box { opacity: 1; }
         @media (max-width: 480px) { body { padding: 20px 12px 40px; cursor: auto; } .profile-banner { height: 72px; } .avatar { width: 68px; height: 68px; } .avatar .fallback { font-size: 26px; } .name-group .display-name { font-size: 20px; } .profile-body { padding: 0 16px 16px; } .avatar-row { margin-top: -32px; } .clock-chip { font-size: 10px; padding: 4px 10px; } .plat-inline { width: 12px; height: 12px; } .activity-mini { padding: 8px 12px; } .activity-mini .mini-icon { width: 32px; height: 32px; } .activity-mini .mini-body .mini-name { font-size: 12px; } .activity-mini .mini-body .mini-detail { font-size: 11px; } }
     </style>
 </head>
@@ -232,11 +233,11 @@ d::::::ddddd::::::dda::::a    a:::::a  n::::n    n::::ni::::::i        l::::::li
                             <div class="display-name" id="displayName">dani</div>
                             <div class="username-row">
                                 <span class="username" id="usernameLine">@actofpassion<span class="discrim">#0</span></span>
-                                <span class="plat-inline" data-platform="desktop" title="desktop"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>
-                                <span class="plat-inline" data-platform="web" title="web"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>
-                                <span class="plat-inline" data-platform="mobile" title="mobile"><svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></span>
-                                <span class="plat-inline" data-platform="embedded" title="embedded"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="13" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="19"/></svg></span>
-                                <span class="plat-inline" data-platform="vr" title="vr"><svg viewBox="0 0 24 24"><path d="M4 14v-3a8 8 0 0 1 16 0v3"/><path d="M18 14c0 1.5-1.5 3-3 3h-1a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1h1c1.5 0 3 .5 3 2z"/><path d="M6 14c0 1.5 1.5 3 3 3h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H9c-1.5 0-3 .5-3 2z"/></svg></span>
+                                <span class="plat-inline" data-platform="desktop" title="desktop"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg><span class="tooltip-box">desktop</span></span>
+                                <span class="plat-inline" data-platform="web" title="web"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span class="tooltip-box">web</span></span>
+                                <span class="plat-inline" data-platform="mobile" title="mobile"><svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg><span class="tooltip-box">mobile</span></span>
+                                <span class="plat-inline" data-platform="embedded" title="embedded"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="13" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="19"/></svg><span class="tooltip-box">embedded</span></span>
+                                <span class="plat-inline" data-platform="vr" title="vr"><svg viewBox="0 0 24 24"><path d="M4 14v-3a8 8 0 0 1 16 0v3"/><path d="M18 14c0 1.5-1.5 3-3 3h-1a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1h1c1.5 0 3 .5 3 2z"/><path d="M6 14c0 1.5 1.5 3 3 3h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H9c-1.5 0-3 .5-3 2z"/></svg><span class="tooltip-box">vr</span></span>
                             </div>
                         </div>
                     </div>
