@@ -5,7 +5,6 @@ const { MongoClient } = require("mongodb");
 const app = express();
 const PORT = process.env.PORT || 10000;
 const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://tt7iyyy_db_user:xE10hRtCjEqwG9s8@website.tq4p6ck.mongodb.net/?appName=website";
-const COOLDOWN = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 const client = new MongoClient(MONGO_URI);
 let viewsCollection;
@@ -25,19 +24,12 @@ app.get("/.well-known/discord", (req, res) => {
 
 app.get("/api/views", async (req, res) => {
     try {
-        const ip = req.ip;
-        const now = Date.now();
-        const record = await viewsCollection.findOne({ _id: "main" }) || { count: 0, ips: {} };
-        const lastVisit = record.ips[ip] || 0;
-
-        if (now - lastVisit > COOLDOWN) {
-            record.count++;
-        }
-        record.ips[ip] = now;
+        const record = await viewsCollection.findOne({ _id: "main" }) || { count: 0 };
+        record.count++;
 
         await viewsCollection.updateOne(
             { _id: "main" },
-            { $set: { count: record.count, ips: record.ips } },
+            { $set: { count: record.count } },
             { upsert: true }
         );
 
