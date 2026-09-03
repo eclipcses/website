@@ -5,10 +5,12 @@ const { MongoClient } = require("mongodb");
 const app = express();
 const PORT = process.env.PORT || 10000;
 const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://tt7iyyy_db_user:xE10hRtCjEqwG9s8@website.tq4p6ck.mongodb.net/?appName=website";
+const COOLDOWN = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 const client = new MongoClient(MONGO_URI);
 let viewsCollection;
 let currentCount = 0;
+let ips = {};
 const clients = [];
 
 async function connectDB() {
@@ -17,6 +19,7 @@ async function connectDB() {
     viewsCollection = db.collection("views");
     const record = await viewsCollection.findOne({ _id: "main" });
     currentCount = record?.count || 0;
+    ips = record?.ips || {};
     console.log("Connected to MongoDB");
 }
 
@@ -43,10 +46,18 @@ app.get("/api/views/stream", (req, res) => {
 
 app.get("/api/views", async (req, res) => {
     try {
-        currentCount++;
+        const ip = req.ip;
+        const now = Date.now();
+        const lastVisit = ips[ip] || 0;
+
+        if (now - lastVisit > COOLDOWN) {
+            currentCount++;
+        }
+        ips[ip] = now;
+
         await viewsCollection.updateOne(
             { _id: "main" },
-            { $set: { count: currentCount } },
+            { $set: { count: currentCount, ips } },
             { upsert: true }
         );
         broadcast(currentCount);
