@@ -1,23 +1,20 @@
 const express = require("express");
 const path = require("path");
-const fs = require("fs");
+const { MongoClient } = require("mongodb");
 
 const app = express();
 const PORT = process.env.PORT || 10000;
-const VIEWS_FILE = path.join(__dirname, "views.json");
+const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://tt7iyyy_db_user:xE10hRtCjEqwG9s8@website.tq4p6ck.mongodb.net/?appName=website";
 const COOLDOWN = 7 * 24 * 60 * 60 * 1000; // 7 days
 
-function getData() {
-    try {
-        if (fs.existsSync(VIEWS_FILE)) {
-            return JSON.parse(fs.readFileSync(VIEWS_FILE, "utf8"));
-        }
-    } catch (e) {}
-    return { count: 0, ips: {} };
-}
+const client = new MongoClient(MONGO_URI);
+let viewsCollection;
 
-function saveData(data) {
-    fs.writeFileSync(VIEWS_FILE, JSON.stringify(data));
+async function connectDB() {
+    await client.connect();
+    const db = client.db("website");
+    viewsCollection = db.collection("views");
+    console.log("Connected to MongoDB");
 }
 
 app.use(express.static(path.join(__dirname, "public")));
@@ -26,18 +23,29 @@ app.get("/.well-known/discord", (req, res) => {
     res.send("dh=0695c0036c38c0d02cddd9c76f71b287827b2465");
 });
 
-app.get("/api/views", (req, res) => {
-    const data = getData();
-    const ip = req.ip;
-    const now = Date.now();
-    const lastVisit = data.ips[ip] || 0;
+app.get("/api/views", async (req, res) => {
+    try {
+        const ip = req.ip;
+        const now = Date.now();
+        const record = await viewsCollection.findOne({ _id: "main" }) || { count: 0, ips: {} };
+        const lastVisit = record.ips[ip] || 0;
 
-    if (now - lastVisit > COOLDOWN) {
-        data.count++;
+        if (now - lastVisit > COOLDOWN) {
+            record.count++;
+        }
+        record.ips[ip] = now;
+
+        await viewsCollection.updateOne(
+            { _id: "main" },
+            { $set: { count: record.count, ips: record.ips } },
+            { upsert: true }
+        );
+
+        res.json({ count: record.count });
+    } catch (e) {
+        console.error(e);
+        res.json({ count: 0 });
     }
-    data.ips[ip] = now;
-    saveData(data);
-    res.json({ count: data.count });
 });
 
 app.get("/api/discord-banner", async (req, res) => {
@@ -97,7 +105,8 @@ app.get("/api/discord-banner", async (req, res) => {
     }
 });
 
-// Express static middleware serves index.html automatically.
-app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Site running on port ${PORT}`);
+connectDB().then(() => {
+    app.listen(PORT, "0.0.0.0", () => {
+        console.log(`Site running on port ${PORT}`);
+    });
 });
