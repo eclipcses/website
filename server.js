@@ -8,12 +8,20 @@ const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://tt7iyyy_db_user:xE10hR
 
 const client = new MongoClient(MONGO_URI);
 let viewsCollection;
+let currentCount = 0;
+const clients = [];
 
 async function connectDB() {
     await client.connect();
     const db = client.db("website");
     viewsCollection = db.collection("views");
+    const record = await viewsCollection.findOne({ _id: "main" });
+    currentCount = record?.count || 0;
     console.log("Connected to MongoDB");
+}
+
+function broadcast(count) {
+    clients.forEach(res => res.write(`data: ${count}\n\n`));
 }
 
 app.use(express.static(path.join(__dirname, "public")));
@@ -22,21 +30,30 @@ app.get("/.well-known/discord", (req, res) => {
     res.send("dh=0695c0036c38c0d02cddd9c76f71b287827b2465");
 });
 
+app.get("/api/views/stream", (req, res) => {
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+    res.write(`data: ${currentCount}\n\n`);
+    clients.push(res);
+    req.on("close", () => {
+        clients.splice(clients.indexOf(res), 1);
+    });
+});
+
 app.get("/api/views", async (req, res) => {
     try {
-        const record = await viewsCollection.findOne({ _id: "main" }) || { count: 0 };
-        record.count++;
-
+        currentCount++;
         await viewsCollection.updateOne(
             { _id: "main" },
-            { $set: { count: record.count } },
+            { $set: { count: currentCount } },
             { upsert: true }
         );
-
-        res.json({ count: record.count });
+        broadcast(currentCount);
+        res.json({ count: currentCount });
     } catch (e) {
         console.error(e);
-        res.json({ count: 0 });
+        res.json({ count: currentCount });
     }
 });
 

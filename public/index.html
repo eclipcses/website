@@ -416,6 +416,11 @@ d::::::ddddd::::::dda::::a    a:::::a  n::::n    n::::ni::::::i        l::::::li
         fetch('/api/views').then(r => r.json()).then(d => {
             document.getElementById('viewCount').textContent = d.count.toLocaleString();
         });
+
+        const evtSource = new EventSource('/api/views/stream');
+        evtSource.onmessage = (e) => {
+            document.getElementById('viewCount').textContent = parseInt(e.data).toLocaleString();
+        };
     </script>
 </body>
 </html>
