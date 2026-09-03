@@ -1,13 +1,34 @@
 const express = require("express");
 const path = require("path");
+const fs = require("fs");
 
 const app = express();
 const PORT = process.env.PORT || 10000;
+const VIEWS_FILE = path.join(__dirname, "views.json");
+
+function getViews() {
+    try {
+        if (fs.existsSync(VIEWS_FILE)) {
+            return JSON.parse(fs.readFileSync(VIEWS_FILE, "utf8")).count || 0;
+        }
+    } catch (e) {}
+    return 0;
+}
+
+function saveViews(count) {
+    fs.writeFileSync(VIEWS_FILE, JSON.stringify({ count }));
+}
 
 app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/.well-known/discord", (req, res) => {
     res.send("dh=0695c0036c38c0d02cddd9c76f71b287827b2465");
+});
+
+app.get("/api/views", (req, res) => {
+    const count = getViews() + 1;
+    saveViews(count);
+    res.json({ count });
 });
 
 app.get("/api/discord-banner", async (req, res) => {

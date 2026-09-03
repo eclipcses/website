@@ -211,6 +211,7 @@ d::::::ddddd::::::dda::::a    a:::::a  n::::n    n::::ni::::::i        l::::::li
         .tooltip-trigger:hover .tooltip-box { opacity: 1; }
         .clock-chip:hover .tooltip-box { opacity: 1; }
         .plat-inline:hover .tooltip-box { opacity: 1; }
+        .views-counter { position: fixed; bottom: 16px; left: 16px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); background: var(--panel); border: 1px solid var(--line); padding: 6px 12px; border-radius: var(--radius-sm); }
         @media (max-width: 480px) { body { padding: 20px 12px 40px; cursor: auto; } .profile-banner { height: 72px; } .avatar { width: 68px; height: 68px; } .avatar .fallback { font-size: 26px; } .name-group .display-name { font-size: 20px; } .profile-body { padding: 0 16px 16px; } .avatar-row { margin-top: -32px; } .clock-chip { font-size: 10px; padding: 4px 10px; } .plat-inline { width: 12px; height: 12px; } .activity-mini { padding: 8px 12px; } .activity-mini .mini-icon { width: 32px; height: 32px; } .activity-mini .mini-body .mini-name { font-size: 12px; } .activity-mini .mini-body .mini-detail { font-size: 11px; } }
     </style>
 </head>
@@ -263,6 +264,9 @@ d::::::ddddd::::::dda::::a    a:::::a  n::::n    n::::ni::::::i        l::::::li
             <div class="eyebrow">interests</div>
             <p>i like gaming, music, coding and spending all of my time on my computer</p>
         </div>
+    </div>
+    <div class="views-counter">
+        <span>views: </span><span id="viewCount">...</span>
     </div>
     <script>
         const DISCORD_ID = '852991682748219392';
@@ -408,6 +412,10 @@ d::::::ddddd::::::dda::::a    a:::::a  n::::n    n::::ni::::::i        l::::::li
         }
         updateAge();
         setInterval(updateAge, 100);
+
+        fetch('/api/views').then(r => r.json()).then(d => {
+            document.getElementById('viewCount').textContent = d.count.toLocaleString();
+        });
     </script>
 </body>
 </html>
