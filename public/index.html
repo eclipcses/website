@@ -271,6 +271,7 @@ d::::::ddddd::::::dda::::a    a:::::a  n::::n    n::::ni::::::i        l::::::li
     <script>
         const DISCORD_ID = '852991682748219392';
         const appIconCache = {};
+        let lastBannerUrl = null;
         function tickClock() {
             const d = new Date();
             document.getElementById('clock').textContent = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Bucharest' });
@@ -324,26 +325,6 @@ d::::::ddddd::::::dda::::a    a:::::a  n::::n    n::::ni::::::i        l::::::li
             if (appId) { const rpcIcon = await fetchDiscordAppIcon(appId); if (rpcIcon) return rpcIcon; }
             return null;
         }
-        const BANNER_API_URL = '/api/discord-banner';
-        let lastBannerUrl = null;
-        async function loadBanner() {
-            const bannerEl = document.getElementById('profileBanner');
-            const fallbackDiv = bannerEl.querySelector('.banner-fallback');
-            try {
-                const separator = BANNER_API_URL.includes('?') ? '&' : '?';
-                const response = await fetch(`${BANNER_API_URL}${separator}t=${Date.now()}`, { cache: 'no-store' });
-                if (!response.ok) throw new Error();
-                const data = await response.json();
-                if (!data.success || !data.url) throw new Error();
-                if (data.url === lastBannerUrl) return;
-                const bannerUrl = data.url;
-                const img = new Image();
-                img.onload = function () { bannerEl.style.backgroundImage = `url("${bannerUrl}")`; bannerEl.style.backgroundColor = 'transparent'; fallbackDiv.style.display = 'none'; lastBannerUrl = bannerUrl; };
-                img.src = bannerUrl;
-            } catch (e) {
-                if (!lastBannerUrl) { bannerEl.style.backgroundImage = 'none'; bannerEl.style.backgroundColor = 'var(--panel-2)'; fallbackDiv.style.display = 'flex'; fallbackDiv.textContent = 'banner'; }
-            }
-        }
         async function loadDiscord() {
             try {
                 const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_ID}`);
@@ -352,7 +333,28 @@ d::::::ddddd::::::dda::::a    a:::::a  n::::n    n::::ni::::::i        l::::::li
                 const data = json.data;
                 const user = data.discord_user;
                 const status = data.discord_status || 'offline';
-                await loadBanner();
+                const bannerEl = document.getElementById('profileBanner');
+                const fallbackDiv = bannerEl.querySelector('.banner-fallback');
+                try {
+                    const bannerRes = await fetch(`https://dcdn.dstn.to/profile/${DISCORD_ID}`);
+                    const bannerData = await bannerRes.json();
+                    if (bannerData.banner) {
+                        const ext = bannerData.banner.startsWith('a_') ? 'gif' : 'png';
+                        const bannerUrl = `https://cdn.discordapp.com/banners/${DISCORD_ID}/${bannerData.banner}.${ext}?size=1024`;
+                        if (bannerUrl !== lastBannerUrl) {
+                            const img = new Image();
+                            img.onload = function () { bannerEl.style.backgroundImage = `url("${bannerUrl}")`; bannerEl.style.backgroundColor = 'transparent'; fallbackDiv.style.display = 'none'; lastBannerUrl = bannerUrl; };
+                            img.src = bannerUrl;
+                        }
+                    } else {
+                        bannerEl.style.backgroundImage = 'none';
+                        bannerEl.style.backgroundColor = 'var(--panel-2)';
+                        fallbackDiv.style.display = 'flex';
+                        fallbackDiv.textContent = 'banner';
+                    }
+                } catch (e) {
+                    if (!lastBannerUrl) { bannerEl.style.backgroundImage = 'none'; bannerEl.style.backgroundColor = 'var(--panel-2)'; fallbackDiv.style.display = 'flex'; fallbackDiv.textContent = 'banner'; }
+                }
                 const avatarImg = document.getElementById('avatarImg');
                 const fallback = document.getElementById('avatarFallback');
                 if (user.avatar) { avatarImg.src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=128`; avatarImg.style.display = 'block'; fallback.style.display = 'none'; }
@@ -399,7 +401,6 @@ d::::::ddddd::::::dda::::a    a:::::a  n::::n    n::::ni::::::i        l::::::li
         async function loadAll() { await loadDiscord(); }
         loadAll();
         setInterval(loadDiscord, 1000);
-        setInterval(loadBanner, 1000);
         document.addEventListener('contextmenu', e => e.preventDefault());
 
         const BIRTH_DATE = new Date('2012-01-26');
