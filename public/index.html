@@ -270,7 +270,6 @@ d::::::ddddd::::::dda::::a    a:::::a  n::::n    n::::ni::::::i        l::::::li
     </div>
     <script>
         const DISCORD_ID = '852991682748219392';
-        const appIconCache = {};
         let lastBannerUrl = null;
         function tickClock() {
             const d = new Date();
@@ -300,30 +299,30 @@ d::::::ddddd::::::dda::::a    a:::::a  n::::n    n::::ni::::::i        l::::::li
             if (m > 0) return `${m}m ${s}s`;
             return `${s}s`;
         }
-        async function fetchDiscordAppIcon(appId) {
-            if (!appId) return null;
-            if (appIconCache[appId] !== undefined) return appIconCache[appId];
-            try {
-                const res = await fetch(`https://discord.com/api/v9/applications/${appId}/rpc`);
-                if (!res.ok) throw new Error();
-                const data = await res.json();
-                if (data.icon) { const iconUrl = `https://cdn.discordapp.com/app-icons/${appId}/${data.icon}.png?size=128`; appIconCache[appId] = iconUrl; return iconUrl; }
-            } catch (e) {}
-            appIconCache[appId] = null;
-            return null;
-        }
         async function resolveActivityIconUrl(activity) {
             if (!activity) return null;
             const assets = activity.assets;
             const appId = activity.application_id;
-            if (assets && (assets.large_image || assets.small_image)) {
-                const image = assets.large_image || assets.small_image;
-                if (image.startsWith('mp:external/')) { return `https://media.discordapp.net/${image.replace('mp:external/', '')}`; }
-                if (image.startsWith('spotify:')) { return `https://i.scdn.co/image/${image.replace('spotify:', '')}`; }
-                if (appId) { return `https://cdn.discordapp.com/app-assets/${appId}/${image}.png`; }
+            const image = assets?.large_image || assets?.small_image;
+
+            if (!image) {
+                if (!appId) return null;
+                return `https://dcdn.dstn.to/app-icons/${appId}`;
             }
-            if (appId) { const rpcIcon = await fetchDiscordAppIcon(appId); if (rpcIcon) return rpcIcon; }
-            return null;
+
+            if (image.startsWith('mp:external/')) {
+                return image.replace('mp:external/', 'https://media.discordapp.net/external/');
+            }
+
+            if (image.startsWith('spotify:')) {
+                return `https://i.scdn.co/image/${image.replace('spotify:', '')}`;
+            }
+
+            if (!appId) return null;
+
+            return /^\d+$/.test(image)
+                ? `https://cdn.discordapp.com/app-assets/${appId}/${image}.png?size=512`
+                : `https://cdn.discordapp.com/app-icons/${appId}/${image}.png?size=512`;
         }
         async function loadDiscord() {
             try {
