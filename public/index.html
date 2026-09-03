@@ -338,9 +338,9 @@ d::::::ddddd::::::dda::::a    a:::::a  n::::n    n::::ni::::::i        l::::::li
                 try {
                     const bannerRes = await fetch(`https://dcdn.dstn.to/profile/${DISCORD_ID}`);
                     const bannerData = await bannerRes.json();
-                    if (bannerData.banner) {
-                        const ext = bannerData.banner.startsWith('a_') ? 'gif' : 'png';
-                        const bannerUrl = `https://cdn.discordapp.com/banners/${DISCORD_ID}/${bannerData.banner}.${ext}?size=1024`;
+                    if (bannerData.user?.banner) {
+                        const ext = bannerData.user.banner.startsWith('a_') ? 'gif' : 'png';
+                        const bannerUrl = `https://cdn.discordapp.com/banners/${DISCORD_ID}/${bannerData.user.banner}.${ext}?size=1024`;
                         if (bannerUrl !== lastBannerUrl) {
                             const img = new Image();
                             img.onload = function () { bannerEl.style.backgroundImage = `url("${bannerUrl}")`; bannerEl.style.backgroundColor = 'transparent'; fallbackDiv.style.display = 'none'; lastBannerUrl = bannerUrl; };
