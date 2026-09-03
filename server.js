@@ -5,18 +5,19 @@ const fs = require("fs");
 const app = express();
 const PORT = process.env.PORT || 10000;
 const VIEWS_FILE = path.join(__dirname, "views.json");
+const COOLDOWN = 7 * 24 * 60 * 60 * 1000; // 7 days
 
-function getViews() {
+function getData() {
     try {
         if (fs.existsSync(VIEWS_FILE)) {
-            return JSON.parse(fs.readFileSync(VIEWS_FILE, "utf8")).count || 0;
+            return JSON.parse(fs.readFileSync(VIEWS_FILE, "utf8"));
         }
     } catch (e) {}
-    return 0;
+    return { count: 0, ips: {} };
 }
 
-function saveViews(count) {
-    fs.writeFileSync(VIEWS_FILE, JSON.stringify({ count }));
+function saveData(data) {
+    fs.writeFileSync(VIEWS_FILE, JSON.stringify(data));
 }
 
 app.use(express.static(path.join(__dirname, "public")));
@@ -26,9 +27,17 @@ app.get("/.well-known/discord", (req, res) => {
 });
 
 app.get("/api/views", (req, res) => {
-    const count = getViews() + 1;
-    saveViews(count);
-    res.json({ count });
+    const data = getData();
+    const ip = req.ip;
+    const now = Date.now();
+    const lastVisit = data.ips[ip] || 0;
+
+    if (now - lastVisit > COOLDOWN) {
+        data.count++;
+    }
+    data.ips[ip] = now;
+    saveData(data);
+    res.json({ count: data.count });
 });
 
 app.get("/api/discord-banner", async (req, res) => {
